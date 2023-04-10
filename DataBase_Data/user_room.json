@@ -1,0 +1,10 @@
+[
+  {
+    "_id": "6433f0fb361d75fc1205f7b5",
+    "created_at": "1",
+    "message_identity": "消息的唯一标识",
+    "room_identity": "房间的唯一标识",
+    "updated_at": "1",
+    "user_identity": "用户的唯一标识"
+  }
+]

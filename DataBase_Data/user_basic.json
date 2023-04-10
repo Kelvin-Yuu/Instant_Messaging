@@ -1,0 +1,13 @@
+[
+  {
+    "_id": "643420e7361d75fc1205f7b6",
+    "account": "admin",
+    "avartar": "头像",
+    "created_at": "1",
+    "email": "邮箱",
+    "nickname": "昵称",
+    "password": "e10adc3949ba59abbe56e057f20f883e",
+    "sex": "1",
+    "updated_at": "1"
+  }
+]

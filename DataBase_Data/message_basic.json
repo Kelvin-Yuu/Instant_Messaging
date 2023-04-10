@@ -1,0 +1,10 @@
+[
+  {
+    "_id": "6433ef5a361d75fc1205f7b3",
+    "created_at": "1",
+    "data": "发送的数据",
+    "room_identity": "房间的唯一标识",
+    "updated_at": "1",
+    "user_identity": "用户的唯一标识"
+  }
+]

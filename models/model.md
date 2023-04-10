@@ -3,7 +3,6 @@
 ## 用户表
 ```json
 {
-    "_id": "6433ede0361d75fc1205f7b2",
     "accout": "账号",
     "password": "密码",
     "nickname": "昵称",

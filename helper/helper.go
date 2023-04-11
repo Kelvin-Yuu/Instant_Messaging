@@ -2,16 +2,23 @@ package helper
 
 import (
 	"crypto/md5"
+	"crypto/tls"
 	"fmt"
+	"im/define"
+	"log"
+	"math/rand"
+	"net/smtp"
+	"strconv"
+	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/jordan-wright/email"
 )
 
 type UserClaims struct {
-	// Identity string `json:"identity"`
-	Identity primitive.ObjectID `json:"identity"`
-	Email    string             `json:"email"`
+	Identity string `json:"identity"`
+	// Identity primitive.ObjectID `json:"identity"`
+	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
@@ -26,9 +33,9 @@ var myKey = []byte("im")
 // GenerateToken
 // 生成 token
 func GenerateToken(identity, email string) (string, error) {
-	ObjectID, err := primitive.ObjectIDFromHex(identity)
+	// ObjectID, err := primitive.ObjectIDFromHex(identity)
 	UserClaim := &UserClaims{
-		Identity:         ObjectID,
+		Identity:         identity,
 		Email:            email,
 		RegisteredClaims: jwt.RegisteredClaims{},
 	}
@@ -54,4 +61,30 @@ func AnalyseToken(tokenString string) (*UserClaims, error) {
 		return nil, fmt.Errorf("analyse Token Error:%v", err)
 	}
 	return userClaim, nil
+}
+
+// SendCode
+// 发送验证码
+func SendCode(toUserEmail, code string) error {
+	e := email.NewEmail()
+	e.From = "Get <kelvinu991115@163.com>"
+	e.To = []string{toUserEmail}
+	e.Subject = "验证码已发送，请查收"
+	e.HTML = []byte("您的验证码：<b>" + code + "</b>")
+	log.Println(define.MailPassword)
+	return e.SendWithTLS("smtp.163.com:465",
+		// smtp.PlainAuth("", "kelvinu991115@163.com", define.MailPassword, "smtp.163.com"),
+		smtp.PlainAuth("", "kelvinu991115@163.com", define.ReadLocalPassword(), "smtp.163.com"),
+		&tls.Config{InsecureSkipVerify: true, ServerName: "smtp.163.com"})
+}
+
+// GetCode
+// 生成验证码
+func GetCode() string {
+	rand.Seed(time.Now().UnixNano())
+	res := ""
+	for i := 0; i < 6; i++ {
+		res += strconv.Itoa(rand.Intn(10))
+	}
+	return res
 }

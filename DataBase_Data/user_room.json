@@ -1,10 +1,18 @@
 [
   {
-    "_id": "6433f0fb361d75fc1205f7b5",
-    "created_at": "1",
-    "message_identity": "消息的唯一标识",
-    "room_identity": "房间的唯一标识",
+    "_id": "6434db35be84be95f502cfda",
+    "user_identity": "6434b397be84be95f502cfd4",
+    "room_identity": "room_identity",
+    "message_identity": "1",
     "updated_at": "1",
-    "user_identity": "用户的唯一标识"
+    "created_at": "1"
+  },
+  {
+    "_id": "6434db50be84be95f502cfdb",
+    "user_identity": "6434dabfbe84be95f502cfd9",
+    "room_identity": "room_identity",
+    "message_identity": "2",
+    "updated_at": "1",
+    "created_at": "2"
   }
 ]

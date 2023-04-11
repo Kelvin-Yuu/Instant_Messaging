@@ -51,3 +51,28 @@ func GetUserBasicCountByEmail(email string) (int64, error) {
 	return MongoDB.Collection(UserBasic{}.CollectionName()).
 		CountDocuments(context.Background(), bson.D{{"email", email}})
 }
+
+func GetUserBasicCountByAccount(account string) (int64, error) {
+
+	return MongoDB.Collection(UserBasic{}.CollectionName()).
+		CountDocuments(context.Background(), bson.D{{"account", account}})
+}
+
+func InsertOneUserBasic(ub *UserBasic) error {
+
+	_, err := MongoDB.Collection(UserBasic{}.CollectionName()).
+		InsertOne(context.Background(), ub)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func GetUserBasicByAccount(account string) (*UserBasic, error) {
+	ub := new(UserBasic)
+	err := MongoDB.Collection(UserBasic{}.CollectionName()).
+		FindOne(context.Background(), bson.D{{"account", account}}).
+		Decode(ub)
+	return ub, err
+}

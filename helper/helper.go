@@ -13,6 +13,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/jordan-wright/email"
+	uuid "github.com/satori/go.uuid"
 )
 
 type UserClaims struct {
@@ -87,4 +88,10 @@ func GetCode() string {
 		res += strconv.Itoa(rand.Intn(10))
 	}
 	return res
+}
+
+// 生成唯一码
+func GetUUID() string {
+	u := uuid.NewV4()
+	return u.String()
 }

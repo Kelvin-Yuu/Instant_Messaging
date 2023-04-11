@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -41,4 +42,81 @@ func GetUserRoomByRoomId(roomIdentity string) ([]*UserRoom, error) {
 		urs = append(urs, ur)
 	}
 	return urs, nil
+}
+
+func JudgeUserIsFriend(userIdentity1, userIdentity2 string) bool {
+	// 查询 userIdentity1 单聊房间列表
+	cursor, err := MongoDB.Collection(UserRoom{}.CollectionName()).
+		Find(context.Background(), bson.D{{"user_identity", userIdentity1}, {"room_type", 1}})
+	roomIdentities := make([]string, 0)
+	if err != nil {
+		log.Printf("[DB ERROR]:%v\n", err)
+		return false
+	}
+	for cursor.Next(context.Background()) {
+		ur := new(UserRoom)
+		err := cursor.Decode(ur)
+		if err != nil {
+			log.Printf("Decode Error:%v\n", err)
+			return false
+		}
+		roomIdentities = append(roomIdentities, ur.RoomIdentity)
+	}
+	// 获取关联 userIdentity2 单聊房间个数
+	cnt, err := MongoDB.Collection(UserRoom{}.CollectionName()).
+		CountDocuments(context.Background(), bson.M{"user_identity": userIdentity2, "room_type": 1, "room_identity": bson.M{"$in": roomIdentities}})
+	if err != nil {
+		log.Printf("[DB ERROR]:%v\n", err)
+		return false
+	}
+	if cnt > 0 {
+		return true
+	}
+
+	return false
+}
+
+func InsertOneUserRoom(ur *UserRoom) error {
+	_, err := MongoDB.Collection(UserRoom{}.CollectionName()).InsertOne(context.Background(), ur)
+	return err
+}
+
+func GetUserRoomIdentity(userIdentity1, userIdentity2 string) string {
+	// 查询 userIdentity1 单聊房间列表
+	cursor, err := MongoDB.Collection(UserRoom{}.CollectionName()).
+		Find(context.Background(), bson.D{{"user_identity", userIdentity1}, {"room_type", 1}})
+	roomIdentities := make([]string, 0)
+	if err != nil {
+		log.Printf("[DB ERROR]:%v\n", err)
+		return ""
+	}
+	for cursor.Next(context.Background()) {
+		ur := new(UserRoom)
+		err := cursor.Decode(ur)
+		if err != nil {
+			log.Printf("Decode Error:%v\n", err)
+			return ""
+		}
+		roomIdentities = append(roomIdentities, ur.RoomIdentity)
+	}
+	// 获取关联 userIdentity2 单聊房间个数
+	ur := new(UserRoom)
+	err = MongoDB.Collection(UserRoom{}.CollectionName()).
+		FindOne(context.Background(), bson.M{"user_identity": userIdentity2, "room_type": 1, "room_identity": bson.M{"$in": roomIdentities}}).Decode(ur)
+	if err != nil {
+		log.Printf("[DB ERROR]:%v\n", err)
+		return ""
+	}
+
+	return ur.RoomIdentity
+}
+
+func DeleteUserRoom(roomIdentity string) error {
+	_, err := MongoDB.Collection(UserRoom{}.CollectionName()).
+		DeleteOne(context.Background(), bson.M{"room_identity": roomIdentity})
+	if err != nil {
+		log.Printf("[DB ERROR]:%v\n", err)
+		return err
+	}
+	return nil
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -25,4 +26,14 @@ func initMongo() *mongo.Database {
 	}
 
 	return client.Database("im")
+}
+
+var Redis = initRedis()
+
+func initRedis() *redis.Client {
+	return redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
 }
